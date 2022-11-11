@@ -35,7 +35,7 @@ close(all_fig);
 clf; close all; clear; clc;
 
 %==================== INPUT DATA ===================================
-IPPT = 92; %Inch Pounds per Turn for Spring
+IPPT = 90; %Inch Pounds per Turn for Spring
 R_Spool = 1.875; %Radius of Cable Spool [in]
 %===================================================================
 
@@ -60,6 +60,8 @@ ST_0 = R_Spool * W * (1 - (g_m/g_e)); % initial spring torque required at rest (
 theta_0_s = ST_0 / k; % initial rotational displacement of the spring [rad]
 theta_0 = L_0 / R_Spool; % initial rotational displacement of the spool [rad]
 theta_offset = theta_0 - theta_0_s; % preloading angle of the spring, + is same direction as theta_0 (spool out) [rad]
+
+resting_spring_turns = theta_0_s / (2*pi); % total displacement of the spring when standing
 
 Constants = [IPPT, ST_0, R_Spool, W, h_max, g_e, g_m, theta_offset, user_h];
 
@@ -162,6 +164,7 @@ C = [user_h];
 Active = Jump;
 
 UI = uifigure('Name', 'LunaSim Control Workspace');
+set(UI, 'Position', [100 100 1000 700]);
     G1 = uigridlayout(UI, [1,2]);
      G1.ColumnWidth = {'6x', '4x'};
         G2 = uigridlayout(G1, [3,1]);
@@ -205,7 +208,7 @@ UI = uifigure('Name', 'LunaSim Control Workspace');
                 MAX2 = uilabel(G5);
                  MAX2.Text = "Max Motor Torque = " + max(Active.MT) + " [in*lbf]";
                 MAX3 = uilabel(G5);
-                 MAX3.Text = "Max Motor RPM = " + max(Active.RPM);
+                 MAX3.Text = "Max Motor RPM = " + max(Active.RPM) + "     Max Spring Turns = " + resting_spring_turns;
                 MAX4 = uilabel(G5);
                  MAX4.Text = "Max Motor Power = " + max(Active.POW) + " [W]";
 
