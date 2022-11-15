@@ -52,7 +52,7 @@ g_m = 5.33*12; %Gravitational Acceleration on moon [in/s^2]
 h_max = 9*12; %Maximum height of the structure [in]
 x_max = 9*12; %Maximum Length of structure [in]
 y_max = 10*12; %Maximum Width of structure [in]
-W = user_w + 100; %Weight of Cable Load
+W = user_w + 16; %Weight of Cable Load
 
 % Determine the initial spring condition
 L_0 = h_max - user_h; % initial cable-out length
