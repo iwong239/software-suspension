@@ -185,7 +185,7 @@ set(UI, 'Position', [100 100 1000 700]);
                 DD = uidropdown(G3);
                  DD.Items = sitches;
                  DD.Value = sitches(1);
-                BTN = uibutton(G3);
+                BTN = uibutton(G3, 'ButtonPushedFcn', @(BTN, event) playButton(BTN, SLD, Active));
                  BTN.Text = 'Play';
         G4 = uigridlayout(G1, [5,1]);
          G4.RowHeight = {'2x', '2x', '2x', '3x', '2x'};
@@ -213,7 +213,7 @@ set(UI, 'Position', [100 100 1000 700]);
                  MAX4.Text = "Max Motor Power = " + max(Active.POW) + " [W]";
 
         
-             SLD.ValueChangedFcn = @(SLD,event) TimeSlide(Active, SLD, AX, INFO1, INFO2, INFO3, INFO4, C);
+             SLD.ValueChangingFcn = @(SLD,EV) TimeSlide(EV, Active, SLD, AX, INFO1, INFO2, INFO3, INFO4, C);
 % Plotting Initial Conditions for UI
 
 
@@ -229,8 +229,33 @@ PlotUser(Active, AX, INFO1, INFO2, INFO3, INFO4, length(Active.T), C);
 %% Function Definitions
 
 %% UI Functions
-function TimeSlide(Active, SLD, AX, INFO1, INFO2, INFO3, INFO4, C)
-    time = SLD.Value;
+
+function playButton(BTN, SLD, Active)
+    SLD.Value = 0;
+    codeMouse = matlab.uitest.TestCase.forInteractiveUse;
+    warning('off', 'MATLAB:uiautomation:Driver:WarnInHGCallbacks');
+    T = Active.T;
+    
+    for i = 1:(length(Active.T)-1)
+       A = tic;
+       
+       choose(codeMouse, SLD, T(i));
+       B = toc(A);
+       if (B <= (T(i+1) - T(i)))
+           pause(T(i+1) - T(i) - B);
+       end
+        
+    end
+    choose(codeMouse, SLD, Active.T(end));
+end
+
+
+
+
+
+
+function TimeSlide(event, Active, SLD, AX, INFO1, INFO2, INFO3, INFO4, C)
+    time = event.Value;
     Time = find(Active.T >= time);
     Time = Time(1);
 
